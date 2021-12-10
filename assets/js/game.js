@@ -1,23 +1,48 @@
+var fightOrSkip = function() {
+    //ask player if they'd like to fight or skip using fightOrSkip function
+    var promptFight = window.prompt('Would you like to FIGHT or SKIP this battle? Enter "FIGHT" or "SKIP" to choose.');
+
+    promptFight = promptFight.toLowerCase();
+
+    // if we click cancel here instead of writing a Response, js can't .toLowerCase() a null value and the script stops running. I checked
+    // with the debugger and this is in fact the issue
+
+    //conditional recursive function call
+    if (promptFight==="" || promptFight===null) {
+        window.alert("Please provide a valid answer! Please try again.");
+        fightOrSkip();
+    }
+
+    //if yes (true), leave fight
+    if (promptFight ==='skip') {
+        //confirm player wants to skip
+        var confirmSkip=window.confirm("Are you sure you'd like to quit?");
+
+        //if yes (true), leave fight
+        if (confirmSkip) {
+            window.alert(playerInfo.name + " has decided to skip this fight, Goodbye!");
+            //subtract money from playerMoney for skipping
+            playerInfo.playerMoney=playerInfo.money - 10;
+
+            //reurn true if player wants to leave
+            return true;
+            //shop function call used to be here, but the module doesn't have it here anymore...
+        }
+        else {
+            return false;
+        }
+    }
+}
 //it still lets me skip even if i don't have the money...
 var fight = function(enemy) {
     // repeat and execute as long as the enemy robot is alive 
     while(enemy.health > 0 && playerInfo.health > 0) {
 
-        var promptFight = window.prompt("Would you like to FIGHT or SKIP this battle? Enter 'FIGHT' or 'SKIP' to choose.");
-    
-        // if player picks 'skip' confirm and then stop the loop 
-        if (promptFight === 'SKIP' || promptFight === 'skip') {
-            // confirm player wants to skip 
-            var confirmSkip = window.confirm("Are you sure you'd like to quit?");
-            // if yes (true), leave fight 
-            if (confirmSkip) {
-                window.alert(playerInfo.name + " has decided to skip this fight. Goodbye!");
-                // subtract money from playerInfo.money for skipping
-                playerInfo.money = Math.max(0, playerInfo.money - 10);
-                console.log("playerInfo.money ", playerInfo.money);
-                break; 
-            }
+        //ask player if they'd like to fight or skip using fightOrSkip function
+        if (fightOrSkip()) {
+            break;
         }
+
         // generate random damage value based on player's attack power
         var damage=randomNumber(playerInfo.attack - 3, playerInfo.attack);
         enemy.health = Math.max(0, enemy.health - damage);
