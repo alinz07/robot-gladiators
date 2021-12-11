@@ -35,47 +35,63 @@ var fightOrSkip = function() {
 }
 //it still lets me skip even if i don't have the money...
 var fight = function(enemy) {
+    //keep track of who goes first
+    var isPlayerTurn = true;
+    
+
+    if (Math.random() > .5) {
+        isPlayerTurn = false;
+    }
+
     // repeat and execute as long as the enemy robot is alive 
     while(enemy.health > 0 && playerInfo.health > 0) {
 
-        //ask player if they'd like to fight or skip using fightOrSkip function
-        if (fightOrSkip()) {
-            break;
+        //if player attacks first
+        if (isPlayerTurn) {
+            
+            //ask player if they'd like to fight or skip using fightOrSkip function
+            if (fightOrSkip()) {
+                break;
+            }
+            // generate random damage value based on player's attack power
+            var damage=randomNumber(playerInfo.attack - 3, playerInfo.attack);
+            enemy.health = Math.max(0, enemy.health - damage);
+            console.log(
+                playerInfo.name + ' attacked ' + enemy.name + ". " + enemy.name + " now has " + enemy.health + " health remaining."
+            );
+
+            // check enemy's health 
+            if (enemy.health <=0) {
+                window.alert(enemy.name + " has died!");
+                // award player money for winning 
+                playerInfo.money = playerInfo.money + 10;
+                // leave while loop since enemy is dead 
+                break;
+            } else {
+                window.alert(enemy.name + " still has " + enemy.health + " health left.");
+            }
         }
 
-        // generate random damage value based on player's attack power
-        var damage=randomNumber(playerInfo.attack - 3, playerInfo.attack);
-        enemy.health = Math.max(0, enemy.health - damage);
-        console.log(
-            playerInfo.name + ' attacked ' + enemy.name + ". " + enemy.name + " now has " + enemy.health + " health remaining."
-        );
+        //if enemy attacks first
+        else {
+            // generate random damage value between 10-14. 
+            var enemyDamage = randomNumber(enemy.attack - 4, enemy.attack);
+            playerInfo.health = Math.max(0, playerInfo.health - enemyDamage);
+            console.log (
+                enemy.name + ' attacked ' + playerInfo.name + ". " + playerInfo.name + " now has " + playerInfo.health + " health remaining."
+            );
 
-        // check enemy's health 
-        if (enemy.health <=0) {
-            window.alert(enemy.name + " has died!");
-            // award player money for winning 
-            playerInfo.money = playerInfo.money + 10;
-            // leave while loop since enemy is dead 
-            break;
-        } else {
-            window.alert(enemy.name + " still has " + enemy.health + " health left.");
+            // check player's health 
+            if (playerInfo.health <=0) {
+                window.alert(playerInfo.name + " has died!");
+                break;
+            } else {
+                window.alert(playerInfo.name + " still has " + playerInfo.health + " health left.");
+            }
         }
-
-        // generate random damage value between 10-14 per github issue. 
-        var enemyDamage = randomNumber(enemy.attack - 4, enemy.attack);
-        playerInfo.health = Math.max(0, playerInfo.health - enemyDamage);
-        console.log (
-            enemy.name + ' attacked ' + playerInfo.name + ". " + playerInfo.name + " now has " + playerInfo.health + " health remaining."
-        );
-
-        // check player's health 
-        if (playerInfo.health <=0) {
-            window.alert(playerInfo.name + " has died!");
-            break;
-        } else {
-            window.alert(playerInfo.name + " still has " + playerInfo.health + " health left.");
-        }
-    } 
+        //switch turn order for next round
+        isPlayerTurn = !isPlayerTurn;
+    }
 };
 
 // funcion to start a new game 
